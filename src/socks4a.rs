@@ -1,4 +1,4 @@
-use std::io::TcpStream;
+use std::io::{IoResult, TcpStream};
 
 pub struct Socks4a {
 	sockshost: String,
@@ -18,15 +18,16 @@ impl Socks4a {
 		self.host = host;
 		self.port = port;
 	}
-	pub fn build(&mut self) -> TcpStream {
-		let mut stream = TcpStream::connect(self.sockshost.as_slice(), 
-			self.socksport).unwrap();
-		stream.write([0x04, 0x01]);
-		stream.write_be_u16(self.port);
-		stream.write([0x00, 0x00, 0x00, 0x01]);
-		stream.write([0x00]);
-		stream.write_str(self.host.as_slice());
-		stream.write([0x00]);
-		stream
+	pub fn build(&mut self) -> IoResult<TcpStream> {
+		let mut stream = try!(TcpStream::connect(self.sockshost.as_slice(),
+																						 self.socksport));
+		try!(stream.write([0x04, 0x01]));
+		try!(stream.write_be_u16(self.port));
+		try!(stream.write([0x00, 0x00, 0x00, 0x01]));
+		try!(stream.write([0x00]));
+		try!(stream.write_str(self.host.as_slice()));
+		try!(stream.write([0x00]));
+
+		Ok(stream)
 	}
 }
