@@ -32,7 +32,11 @@ impl<'a> Socks4<'a> {
         // read status
         match try!(stream.read_u8()) {
             // request granted
-            0x5a => Ok(stream),
+            0x5a => {
+                let _port = try!(stream.read_be_u16());
+                let _ip = try!(stream.read_be_u32());
+                Ok(stream)
+            }
             // request rejected or failed
             0x5b => io_err(ConnectionRefused, "Request rejected or failed"),
             // request failed because client is not running identd (or unreachable)
