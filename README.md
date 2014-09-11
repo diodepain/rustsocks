@@ -3,7 +3,7 @@ rustsocks
 
 A library for interacting with SOCKS proxies in Rust.
 
-Supports Socks4 and Socks4a.  Socks5 coming soon.
+Supports Socks4, Socks4a, and Socks5.
 
 Example
 -------
@@ -38,4 +38,23 @@ Socks4a:
       let mut stream = rs.connect("example.com", 80).unwrap();
 
       // Use stream like any other TcpStream.
+    }
+    
+Socks5:
+
+    extern crate rustsocks;
+    
+    use rustsocks::socks5::Socks5;
+    
+    fn main() {
+        // Use the Socks proxy at 127.0.0.1 on port 9050
+        let mut rs = Socks5::new("127.0.0.1", 9050);
+        
+        // To authenticate (if needed, authentication is not necessary)
+        rs.login("username", "password");
+        
+        // Connect through the Socks proxy to example.com on port 80
+        let mut stream = rs.connect("example.com", 80).unwrap();
+        
+        // Use stream like any other TcpStream
     }
