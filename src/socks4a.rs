@@ -1,24 +1,18 @@
 use std::io::{IoResult, IoError, IoErrorKind, TcpStream, ConnectionRefused,
 							ConnectionFailed, OtherIoError};
 
-pub struct Socks4a {
-	sockshost: String,
-	socksport: u16,
-	host: String,
-	port: u16
+pub struct Socks4a<'a> {
+	socks_host: &'a str,
+	socks_port: u16,
 }
 
-impl Socks4a {
-	pub fn new(host: String, port: u16) -> Socks4a {
-		let tmphost = "";
-		let tmpport = 0;
-		Socks4a { sockshost: host, socksport: port, host: tmphost.to_string(),
-			port: tmpport }
+impl<'a> Socks4a<'a> {
+	pub fn new(host: &'a str, port: u16) -> Socks4a {
+		Socks4a { socks_host: host, socks_port: port }
 	}
 
 	pub fn connect(&mut self, host: &str, port: u16) -> IoResult<TcpStream> {
-		let mut stream = try!(TcpStream::connect(self.sockshost.as_slice(),
-																						 self.socksport));
+		let mut stream = try!(TcpStream::connect(self.socks_host, self.socks_port));
 		try!(stream.write([0x04, 0x01]));
 		try!(stream.write_be_u16(port));
 		try!(stream.write([0x00, 0x00, 0x00, 0x01]));

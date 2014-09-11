@@ -14,7 +14,7 @@ Example
 
     fn main() {
       // Use the SOCKS proxy at 127.0.0.1 on port 9050
-      let mut rs = Socks4a::new("127.0.0.1".to_string(), 9050);
+      let mut rs = Socks4a::new("127.0.0.1", 9050);
 
       // Connect through the socks proxy to example.com on port 80
       let mut stream = rs.connect("example.com", 80).unwrap();
