@@ -3,3 +3,4 @@
 
 pub mod socks4a;
 pub mod socks4;
+pub mod socks5;
