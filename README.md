@@ -17,10 +17,7 @@ Example
       let mut rs = Socks4a::new("127.0.0.1".to_string(), 9050);
 
       // Connect through the socks proxy to example.com on port 80
-      rs.connect("example.com", 80);
-
-      // Build the TcpStream and automatically set up the SOCKS proxy
-      let mut stream: TcpStream = rs.build().unwrap();
+      let mut stream = rs.connect("example.com", 80).unwrap();
 
       // Use stream like any other TcpStream.
     }
