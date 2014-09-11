@@ -1,5 +1,5 @@
 use std::io::{IoResult, IoError, IoErrorKind, TcpStream, ConnectionRefused,
-              ConnectionFailed, OtherIoError};
+              ConnectionFailed, OtherIoError, InvalidInput};
 use std::io::net::ip::{ IpAddr, Ipv4Addr };
 
 pub struct Socks4<'a> {
@@ -20,7 +20,7 @@ impl<'a> Socks4<'a> {
             Ipv4Addr(oct1, oct2, oct3, oct4) => {
                 try!(stream.write([oct1, oct2, oct3, oct4]));
             },
-            _ => { /* Error */ }
+            _ => { return io_err(InvalidInput, "Must be IPv4 address"); }
         };
         try!(stream.write([0x00]));
 
