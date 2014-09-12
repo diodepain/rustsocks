@@ -15,7 +15,7 @@ pub struct Socks5<'a> {
 impl<'a> Socks5<'a> {
     pub fn new(host: &'a str, port: u16) -> Socks5 {
         Socks5 {
-            socks_host: host, 
+            socks_host: host,
             socks_port: port,
             socks_auth: NoAuth
         }
@@ -41,7 +41,7 @@ impl<'a> Socks5<'a> {
             0x00 => {
                 match self.socks_auth {
                     NoAuth => { /* Continue */ },
-                    _ => return io_err(OtherIoError, 
+                    _ => return io_err(OtherIoError,
                         "Wrong authentication method from server")
                 }
             }
@@ -54,7 +54,7 @@ impl<'a> Socks5<'a> {
                         try!(stream.write_str(passwd));
 
                         if try!(stream.read_u8()) != 0x01 {
-                            return io_err(OtherIoError, 
+                            return io_err(OtherIoError,
                                 "Invalid authentication version");
                         }
 
@@ -62,12 +62,12 @@ impl<'a> Socks5<'a> {
                             return io_err(OtherIoError, "Authentication failed");
                         }
                     }
-                    _ => { return io_err(OtherIoError, 
+                    _ => { return io_err(OtherIoError,
                             "Wrong authentication method from server");
                     }
                 }
             }
-            _ => { return io_err(OtherIoError, 
+            _ => { return io_err(OtherIoError,
                     "Wrong authentication method from server"); }
         }
 
