@@ -59,7 +59,7 @@ impl<'a> Socks5<'a> {
                         }
 
                         if try!(stream.read_u8()) != 0x00 {
-                            return io_err(OtherIoError, "Authentication failed");
+                            return io_err(ConnectionRefused, "Authentication failed");
                         }
                     }
                     _ => { return io_err(OtherIoError,
@@ -67,6 +67,8 @@ impl<'a> Socks5<'a> {
                     }
                 }
             }
+            0xFF => { return io_err(ConnectionRefused,
+                      "Server refused authentication methods"); }
             _ => { return io_err(OtherIoError,
                     "Wrong authentication method from server"); }
         }
@@ -82,7 +84,10 @@ impl<'a> Socks5<'a> {
         match try!(stream.read_u8()) {
             0x00 => {
                 let _null = try!(stream.read_u8());
-                let _addrtype = try!(stream.read_u8());
+                let addrtype = try!(stream.read_u8());
+                if addrtype != 0x03 {
+                    return io_err(OtherIoError, "Unimplemented");
+                }
                 let _addrlen = try!(stream.read_u8());
                 let mut _addr: Vec<u8> = vec![];
                 for i in range(0, _addrlen) {
