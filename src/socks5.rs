@@ -84,15 +84,23 @@ impl<'a> Socks5<'a> {
         match try!(stream.read_u8()) {
             0x00 => {
                 let _null = try!(stream.read_u8());
-                let addrtype = try!(stream.read_u8());
-                if addrtype != 0x03 {
-                    return io_err(OtherIoError, "Unimplemented");
+
+                match try!(stream.read_u8()) {
+                    0x01 => {
+                        let mut _ipv4 = [0,.. 4];
+                        try!(stream.read_at_least(4, &mut _ipv4));
+                    }
+                    0x03 => {
+                        let addrlen = try!(stream.read_u8());
+                        let _domain = try!(stream.read_exact(addrlen as uint));
+                    }
+                    0x04 => {
+                        let mut _ipv6 = [0,.. 16];
+                        try!(stream.read_at_least(16, &mut _ipv6));
+                    }
+                    _ => return io_err(OtherIoError, "Invalid address type"),
                 }
-                let _addrlen = try!(stream.read_u8());
-                let mut _addr: Vec<u8> = vec![];
-                for i in range(0, _addrlen) {
-                    _addr.push(try!(stream.read_u8()));
-                }
+
                 let _port = try!(stream.read_be_u16());
                 Ok(stream)
             }
@@ -112,4 +120,3 @@ impl<'a> Socks5<'a> {
 fn io_err<T>(kind: IoErrorKind, desc: &'static str) -> IoResult<T> {
     Err(IoError { kind: kind, desc: desc, detail: None })
 }
-
