@@ -30,7 +30,7 @@ impl<'a> Socks5<'a> {
         try!(stream.write([0x05u8]));
         match self.socks_auth {
             NoAuth => { try!(stream.write([0x01u8, 0x00])); },
-            UPass(uname, passwd) => { try!(stream.write([0x01u8, 0x02])); }
+            UPass(..) => { try!(stream.write([0x01u8, 0x02])); }
         }
 
         if try!(stream.read_u8()) != 0x05 {
@@ -98,10 +98,10 @@ impl<'a> Socks5<'a> {
             }
             0x01 => io_err(OtherIoError, "General failure"),
             0x02 => io_err(OtherIoError, "Connection not allowed by ruleset"),
-            0x03 => io_err(OtherIoError, "Network unreachable"),
-            0x04 => io_err(OtherIoError, "Host unreachable"),
-            0x05 => io_err(OtherIoError, "Connection refused by destination"),
-            0x06 => io_err(OtherIoError, "TTL expired"),
+            0x03 => io_err(ConnectionFailed, "Network unreachable"),
+            0x04 => io_err(ConnectionFailed, "Host unreachable"),
+            0x05 => io_err(ConnectionRefused, "Connection refused by destination"),
+            0x06 => io_err(ConnectionFailed, "TTL expired"),
             0x07 => io_err(OtherIoError, "Protocol Error"),
             0x08 => io_err(OtherIoError, "Address type not supported"),
             _ => io_err(OtherIoError, "Unknown error")
