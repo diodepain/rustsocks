@@ -1,5 +1,6 @@
-use std::io::{IoResult, IoError, IoErrorKind, TcpStream, ConnectionRefused,
-              ConnectionFailed, OtherIoError};
+use util::io_err;
+use std::io::{IoResult, TcpStream, ConnectionRefused, ConnectionFailed,
+                OtherIoError};
 
 pub struct Socks4a<'a> {
     socks_host: &'a str,
@@ -45,8 +46,3 @@ impl<'a> Socks4a<'a> {
         }
     }
 }
-
-fn io_err<T>(kind: IoErrorKind, desc: &'static str) -> IoResult<T> {
-    Err(IoError { kind: kind, desc: desc, detail: None })
-}
-
