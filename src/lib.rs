@@ -1,6 +1,10 @@
 #![crate_name = "rustsocks"]
 #![crate_type = "rlib"]
 
+pub use socks4a::Socks4a;
+pub use socks4::Socks4;
+pub use socks5::Socks5;
+
 pub mod socks4a;
 pub mod socks4;
 pub mod socks5;
