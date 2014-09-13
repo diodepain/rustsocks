@@ -1,5 +1,6 @@
-use std::io::{IoResult, IoError, IoErrorKind, TcpStream, ConnectionRefused,
-              ConnectionFailed, OtherIoError};
+use util::io_err;
+use std::io::{IoResult, TcpStream, ConnectionRefused, ConnectionFailed,
+                OtherIoError};
 use std::io::net::ip::{IpAddr, Ipv4Addr, Ipv6Addr};
 
 enum AuthMethod<'s> {
@@ -149,8 +150,4 @@ impl<'a> Socks5<'a> {
             _ => io_err(OtherIoError, "Unknown error")
         }
     }
-}
-
-fn io_err<T>(kind: IoErrorKind, desc: &'static str) -> IoResult<T> {
-    Err(IoError { kind: kind, desc: desc, detail: None })
 }
