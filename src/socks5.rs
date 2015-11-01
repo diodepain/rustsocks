@@ -55,18 +55,18 @@ impl<'a> Socks5Destination for IpAddr {
     fn write_destination(&self, stream: &mut TcpStream) -> IoResult<()> {
         match *self {
             //IpAddr::V4(a, b, c, d) => try!(stream.write_all(&[0x01, a, b, c, d])),
-            IpAddr::V4(addr) => match addr.octets() {
-                [a,b,c,d] => try!(stream.write_all(&[0x01, a, b, c, d]))
+            IpAddr::V4(addr) => {
+                try!(stream.write_all(&[0x01]));
+                try!(stream.write_all(&addr.octets()));
             },
-            IpAddr::V6(addr) => match addr.segments() {
-                [a,b,c,d,e,f,g,h] => {
-                    try!(stream.write_all(&[0x04]));
-                    for &pair in [a, b, c, d, e, f, g, h].iter() {
-                        let mut aux : u16 = pair;
-                        aux = aux.to_be();
-                        let array : [u8; 2] = unsafe { mem::transmute(aux) };
-                        try!(stream.write_all(&array));
-                    }
+            IpAddr::V6(addr) => {
+                let segments = addr.segments();
+                try!(stream.write_all(&[0x04]));
+                for &pair in segments.iter() {
+                    let array : [u8; 2] = unsafe { 
+                        mem::transmute(pair.to_be()) 
+                    };
+                    try!(stream.write_all(&array));
                 }
             }
         }
