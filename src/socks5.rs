@@ -22,19 +22,6 @@ impl ReadU8 for TcpStream {
     }
 }
 
-//pub trait WriteU8 {
-//    fn read_u8(&mut self) -> IoResult<u8>;
-//}
-//
-//impl ReadU8 for TcpStream {
-//    #[inline]
-//    fn read_u8(&mut self) -> IoResult<u8> {
-//        let mut buf = [0u8];
-//        try!(self.read_exact(&mut buf));
-//        Ok(buf[0])
-//    }
-//}
-
 pub trait Socks5Destination {
     fn write_destination(&self, &mut TcpStream) -> IoResult<()>;
 }
@@ -54,7 +41,6 @@ impl<'a> Socks5Destination for &'a str {
 impl<'a> Socks5Destination for IpAddr {
     fn write_destination(&self, stream: &mut TcpStream) -> IoResult<()> {
         match *self {
-            //IpAddr::V4(a, b, c, d) => try!(stream.write_all(&[0x01, a, b, c, d])),
             IpAddr::V4(addr) => {
                 try!(stream.write_all(&[0x01]));
                 try!(stream.write_all(&addr.octets()));
