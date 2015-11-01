@@ -45,7 +45,7 @@ impl<'a> Socks4<'a> {
             // request failed because client's identd could not confirm the user ID
             // string in the request
             0x5d => io_err(ConnectionRefused, "Unknown user"),
-            x => fail!("Unexpected status byte: {}", x)
+            x => { return io_err(OtherIoError, format!("Unexpected status byte: {}", x)); }
         }
     }
 }

@@ -1,6 +1,6 @@
 use util::io_err;
-use std::io::{IoResult, TcpStream, ConnectionRefused, ConnectionFailed,
-                OtherIoError};
+use std::io::{Result, OtherIoError};
+use std::net::{TcpStream, ConnectionFailed, ConnectionRefused};
 
 pub struct Socks4a<'a> {
     socks_host: &'a str,
@@ -42,7 +42,7 @@ impl<'a> Socks4a<'a> {
             // request failed because client's identd could not confirm the user ID
             // string in the request
             0x5d => io_err(ConnectionRefused, "Unknown user"),
-            x => fail!("Unexpected status byte: {}", x)
+            x    => io_err(OtherIoError, format!("Unexpected status byte: {}", x)) 
         }
     }
 }
